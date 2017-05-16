@@ -7,16 +7,23 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
     <Grid>
-        <ListView x:Name="LVServices" HorizontalAlignment="Left" Height="100" Margin="71,61,0,0" VerticalAlignment="Top" Width="100" >
+        <ListView x:Name="LVServices" Margin="10,61,10.4,10.4" >
             <ListView.View>
                 <GridView>
+                    <GridViewColumn Header="DisplayName" Width="120" DisplayMemberBinding="{Binding DisplayName}" />
                     <GridViewColumn Header="CanPauseAndContinue" Width="120" DisplayMemberBinding="{Binding CanPauseAndContinue}" />
                     <GridViewColumn Header="CanRaiseEvents" Width="50" DisplayMemberBinding="{Binding CanRaiseEvents}" />
                     <GridViewColumn Header="CanShutdown" Width="50" DisplayMemberBinding="{Binding CanShutdown}" />
-                    <GridViewColumn Header="CanRaiseEvents" Width="50" DisplayMemberBinding="{Binding CanRaiseEvents}" />
-                    <GridViewColumn Header="CanRaiseEvents" Width="50" DisplayMemberBinding="{Binding CanRaiseEvents}" />
-                    <GridViewColumn Header="CanRaiseEvents" Width="50" DisplayMemberBinding="{Binding CanRaiseEvents}" />
-                    <GridViewColumn Header="CanRaiseEvents" Width="50" DisplayMemberBinding="{Binding CanRaiseEvents}" />
+                    <GridViewColumn Header="CanStop" Width="50" DisplayMemberBinding="{Binding CanStop}" />
+                    <GridViewColumn Header="DependentServices" Width="50" DisplayMemberBinding="{Binding Path=DependentServices.Count}" />
+                    <GridViewColumn Header="MachineName" Width="50" DisplayMemberBinding="{Binding MachineName}" />
+                    <GridViewColumn Header="ServiceHandle" Width="50" DisplayMemberBinding="{Binding ServiceHandle}" />
+                    <GridViewColumn Header="ServiceName" Width="50" DisplayMemberBinding="{Binding ServiceName}" />
+                    <GridViewColumn Header="ServicesDependedOn" Width="50" DisplayMemberBinding="{Binding Path=ServicesDependedOn.Count}" />
+                    <GridViewColumn Header="ServiceType" Width="50" DisplayMemberBinding="{Binding ServiceType}" />
+                    <GridViewColumn Header="Site" Width="50" DisplayMemberBinding="{Binding Site}" />
+                    <GridViewColumn Header="StartType" Width="50" DisplayMemberBinding="{Binding StartType}" />
+                    <GridViewColumn Header="Status" Width="50" DisplayMemberBinding="{Binding Status}" />
                     <!--<GridViewColumn Header="Mail" Width="150">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
