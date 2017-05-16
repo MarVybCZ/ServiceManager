@@ -27,9 +27,9 @@ namespace ServiceManager
             InitializeComponent();
 
 
-            ServiceController x;
+            //ServiceController x;
 
-            ServiceController.GetServices();
+            LVServices.ItemsSource = ServiceController.GetServices();
         }
     }
 }

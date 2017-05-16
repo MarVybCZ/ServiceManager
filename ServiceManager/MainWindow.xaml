@@ -7,6 +7,26 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
     <Grid>
-        
+        <ListView x:Name="LVServices" HorizontalAlignment="Left" Height="100" Margin="71,61,0,0" VerticalAlignment="Top" Width="100" >
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="CanPauseAndContinue" Width="120" DisplayMemberBinding="{Binding CanPauseAndContinue}" />
+                    <GridViewColumn Header="CanRaiseEvents" Width="50" DisplayMemberBinding="{Binding CanRaiseEvents}" />
+                    <GridViewColumn Header="CanShutdown" Width="50" DisplayMemberBinding="{Binding CanShutdown}" />
+                    <GridViewColumn Header="CanRaiseEvents" Width="50" DisplayMemberBinding="{Binding CanRaiseEvents}" />
+                    <GridViewColumn Header="CanRaiseEvents" Width="50" DisplayMemberBinding="{Binding CanRaiseEvents}" />
+                    <GridViewColumn Header="CanRaiseEvents" Width="50" DisplayMemberBinding="{Binding CanRaiseEvents}" />
+                    <GridViewColumn Header="CanRaiseEvents" Width="50" DisplayMemberBinding="{Binding CanRaiseEvents}" />
+                    <!--<GridViewColumn Header="Mail" Width="150">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Mail}" TextDecorations="Underline" Foreground="Blue" Cursor="Hand" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>-->
+                </GridView>
+            </ListView.View>
+        </ListView>
+
     </Grid>
 </Window>
