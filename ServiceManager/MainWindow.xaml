@@ -7,12 +7,11 @@
         xmlns:ctrl="clr-namespace:ServiceManager.Controls"        
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
-    <Grid>
-        <ctrl:GridViewTextColumn Margin="171,20,51.4,280.4" ColumnData="{Binding Test}"></ctrl:GridViewTextColumn>
+    <Grid>        
         <ListView x:Name="LVServices" Margin="10,120,10,10" >
             <ListView.View>
                 <GridView>                    
-                    <GridViewColumn Width="50">
+                    <GridViewColumn Width="100">
                         <GridViewColumn.HeaderTemplate>
                             <DataTemplate>
                                 <TextBlock Width="auto" Text="Service Name" ToolTipService.IsEnabled="True"/>
@@ -24,7 +23,7 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="DisplayName" Width="120" >
+                    <GridViewColumn Header="DisplayName" Width="140" >
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ctrl:GridViewTextColumn ColumnData="{Binding DisplayName}" ></ctrl:GridViewTextColumn>
