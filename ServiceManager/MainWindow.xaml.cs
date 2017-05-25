@@ -13,6 +13,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.ServiceProcess;
+using System.Collections;
+
 
 
 namespace ServiceManager
@@ -26,10 +28,11 @@ namespace ServiceManager
         {
             InitializeComponent();
 
+            this.DataContext = this;            
 
-            //ServiceController x;
+            var services = ServiceController.GetServices();
 
-            LVServices.ItemsSource = ServiceController.GetServices();
+            LVServices.ItemsSource = services;            
         }
     }
 }

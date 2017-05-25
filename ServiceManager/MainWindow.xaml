@@ -3,28 +3,127 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ServiceManager"
+        xmlns:local="clr-namespace:ServiceManager"        
+        xmlns:ctrl="clr-namespace:ServiceManager.Controls"        
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
-    <Grid>
-        <ListView x:Name="LVServices" Margin="10,61,10.4,10.4" >
+    <Grid>        
+        <ListView x:Name="LVServices" Margin="10,120,10,10" >
             <ListView.View>
-                <GridView>
-                    <GridViewColumn Header="DisplayName" Width="120" DisplayMemberBinding="{Binding DisplayName}" />
-                    <GridViewColumn Header="CanPauseAndContinue" Width="120" DisplayMemberBinding="{Binding CanPauseAndContinue}" />
-                    <GridViewColumn Header="CanRaiseEvents" Width="50" DisplayMemberBinding="{Binding CanRaiseEvents}" />
-                    <GridViewColumn Header="CanShutdown" Width="50" DisplayMemberBinding="{Binding CanShutdown}" />
-                    <GridViewColumn Header="CanStop" Width="50" DisplayMemberBinding="{Binding CanStop}" />
-                    <GridViewColumn Header="DependentServices" Width="50" DisplayMemberBinding="{Binding Path=DependentServices.Count}" />
-                    <GridViewColumn Header="MachineName" Width="50" DisplayMemberBinding="{Binding MachineName}" />
-                    <GridViewColumn Header="ServiceHandle" Width="50" DisplayMemberBinding="{Binding ServiceHandle}" />
-                    <GridViewColumn Header="ServiceName" Width="50" DisplayMemberBinding="{Binding ServiceName}" />
-                    <GridViewColumn Header="ServicesDependedOn" Width="50" DisplayMemberBinding="{Binding Path=ServicesDependedOn.Count}" />
-                    <GridViewColumn Header="ServiceType" Width="50" DisplayMemberBinding="{Binding ServiceType}" />
-                    <GridViewColumn Header="Site" Width="50" DisplayMemberBinding="{Binding Site}" />
-                    <GridViewColumn Header="StartType" Width="50" DisplayMemberBinding="{Binding StartType}" />
-                    <GridViewColumn Header="Status" Width="50" DisplayMemberBinding="{Binding Status}" />
-                    <!--<GridViewColumn Header="Mail" Width="150">
+                <GridView>                    
+                    <GridViewColumn Width="100">
+                        <GridViewColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock Width="auto" Text="Service Name" ToolTipService.IsEnabled="True"/>
+                            </DataTemplate>
+                        </GridViewColumn.HeaderTemplate>
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>                                
+                                <ctrl:GridViewTextColumn ColumnData="{Binding ServiceName}" ></ctrl:GridViewTextColumn>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="DisplayName" Width="140" >
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <ctrl:GridViewTextColumn ColumnData="{Binding DisplayName}" ></ctrl:GridViewTextColumn>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="CanPauseAndContinue" Width="120">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <ctrl:GridViewTextColumn ColumnData="{Binding CanPauseAndContinue}" ></ctrl:GridViewTextColumn>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <!--<GridViewColumn Header="CanRaiseEvents" Width="50" >
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Width="auto" Text="{Binding CanRaiseEvents}" ToolTipService.IsEnabled="True">
+                                    <TextBlock.ToolTip>
+                                        <ToolTip>
+                                            <StackPanel>
+                                                <TextBlock FontWeight="Bold" Text="{Binding CanRaiseEvents}"/>
+                                                --><!--<TextBlock>Submits the request to the server.</TextBlock>--><!--
+                                            </StackPanel>
+                                        </ToolTip>
+                                    </TextBlock.ToolTip>
+                                </TextBlock>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>-->
+                    <GridViewColumn Header="CanShutdown" Width="50">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <ctrl:GridViewTextColumn ColumnData="{Binding CanShutdown}" ></ctrl:GridViewTextColumn>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="CanStop" Width="50">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <ctrl:GridViewTextColumn ColumnData="{Binding CanStop}" ></ctrl:GridViewTextColumn>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="DependentServices" Width="50" >
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <ctrl:GridViewTextColumn ColumnData="{Binding DependentServices.Count}" ></ctrl:GridViewTextColumn>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="MachineName" Width="50" >
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <ctrl:GridViewTextColumn ColumnData="{Binding MachineName}" ></ctrl:GridViewTextColumn>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="ServiceHandle" Width="50" >
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <ctrl:GridViewTextColumn ColumnData="{Binding ServiceHandle}" ></ctrl:GridViewTextColumn>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="ServicesDependedOn" Width="50" >
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <ctrl:GridViewTextColumn ColumnData="{Binding ServicesDependedOn.Count}" ></ctrl:GridViewTextColumn>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="ServiceType" Width="50" >
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <ctrl:GridViewTextColumn ColumnData="{Binding ServiceType}" ></ctrl:GridViewTextColumn>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Site" Width="50" >
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <ctrl:GridViewTextColumn ColumnData="{Binding Site}" ></ctrl:GridViewTextColumn>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="StartType" Width="50" >
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <ctrl:GridViewTextColumn ColumnData="{Binding StartType}" ></ctrl:GridViewTextColumn>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Status" Width="50" >
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <ctrl:GridViewTextColumn ColumnData="{Binding Status}" ></ctrl:GridViewTextColumn>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <!--<GridViewColumn Header="Mail" Width="150" >
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Mail}" TextDecorations="Underline" Foreground="Blue" Cursor="Hand" />
@@ -34,6 +133,7 @@
                 </GridView>
             </ListView.View>
         </ListView>
+        <Button x:Name="button" Content="{Binding Test}" HorizontalAlignment="Left" Margin="61,20,0,0" VerticalAlignment="Top" Width="75" ToolTip="dfgdfgdfg"/>
 
     </Grid>
 </Window>
