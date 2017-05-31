@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="ServiceManager.Controls.GridViewTextColumn"
+﻿<UserControl x:Class="ServiceManager.Controls.GridViewHeader"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid x:Name="LayoutRoot">
-        <TextBlock Width="auto" Name="TBData" Text="{Binding ColumnData}" ToolTipService.IsEnabled="True" Margin="0,0,0,0">    
+        <TextBlock Width="auto" Name="TBData" TextWrapping="Wrap" Height="40px" Text="{Binding ColumnData}" ToolTipService.IsEnabled="True" Margin="0,0,0,0">
             <TextBlock.ToolTip>
                 <ToolTip>
                     <StackPanel>
@@ -17,6 +17,6 @@
                     </StackPanel>
                 </ToolTip>
             </TextBlock.ToolTip>
-        </TextBlock>
+            </TextBlock>
     </Grid>
 </UserControl>
