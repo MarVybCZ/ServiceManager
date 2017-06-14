@@ -6,12 +6,12 @@
         xmlns:local="clr-namespace:ServiceManager"        
         xmlns:ctrl="clr-namespace:ServiceManager.Controls"        
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="MainWindow" Height="750" Width="950">
     <Grid>        
         <ListView x:Name="LVServices" Margin="10,120,10,10" >
             <ListView.View>
                 <GridView>                    
-                    <GridViewColumn Width="100">
+                    <GridViewColumn Width="150">
                         <GridViewColumn.HeaderTemplate>
                             <DataTemplate>
                                 <ctrl:GridViewTextColumn ColumnData="Service name" ></ctrl:GridViewTextColumn>
@@ -23,7 +23,7 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Width="140" >
+                    <GridViewColumn Width="200" >
                         <GridViewColumn.HeaderTemplate>
                             <DataTemplate>
                                 <ctrl:GridViewTextColumn ColumnData="Display name" ></ctrl:GridViewTextColumn>
@@ -147,21 +147,36 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="Site" Width="50" >
+                    <GridViewColumn Width="50" >
+                        <GridViewColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <ctrl:GridViewTextColumn ColumnData="Site" ></ctrl:GridViewTextColumn>
+                            </DataTemplate>
+                        </GridViewColumn.HeaderTemplate>
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ctrl:GridViewTextColumn ColumnData="{Binding Site}" ></ctrl:GridViewTextColumn>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="StartType" Width="50" >
+                    <GridViewColumn Width="50" >
+                        <GridViewColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <ctrl:GridViewTextColumn ColumnData="Start type" ></ctrl:GridViewTextColumn>
+                            </DataTemplate>
+                        </GridViewColumn.HeaderTemplate>
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ctrl:GridViewTextColumn ColumnData="{Binding StartType}" ></ctrl:GridViewTextColumn>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="Status" Width="50" >
+                    <GridViewColumn Width="50" >
+                        <GridViewColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <ctrl:GridViewTextColumn ColumnData="Status" ></ctrl:GridViewTextColumn>
+                            </DataTemplate>
+                        </GridViewColumn.HeaderTemplate>
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ctrl:GridViewTextColumn ColumnData="{Binding Status}" ></ctrl:GridViewTextColumn>
