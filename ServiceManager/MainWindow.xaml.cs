@@ -24,15 +24,23 @@ namespace ServiceManager
     /// </summary>
     public partial class MainWindow : Window
     {
+        private List<ServiceController> services;
+
         public MainWindow()
         {
             InitializeComponent();
 
-            this.DataContext = this;            
+            this.DataContext = this;
 
-            var services = ServiceController.GetServices();
+            services = ServiceController.GetServices().ToList();
+            
+            LVServices.ItemsSource = services.OrderBy(x => x.ServiceName);
 
-            LVServices.ItemsSource = services;            
+            //Application.Current.MainWindow.
         }
+
+        public void SortList() {
+            LVServices.ItemsSource = services.OrderBy(x => "Status");
+        }   
     }
 }

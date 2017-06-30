@@ -20,7 +20,7 @@ namespace ServiceManager.Controls
     /// </summary>
     public partial class GridViewHeader : UserControl
     {
-        public static readonly DependencyProperty ColumnDataProperty = DependencyProperty.Register("ColumnData", typeof(string), typeof(GridViewTextColumn), new PropertyMetadata(""));
+        public static readonly DependencyProperty ColumnDataProperty = DependencyProperty.Register("ColumnData", typeof(string), typeof(GridViewHeader), new PropertyMetadata(""));
 
         public string ColumnData
         {
@@ -34,5 +34,12 @@ namespace ServiceManager.Controls
 
             LayoutRoot.DataContext = this;
         }
+
+        private void HeaderMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            //MessageBox.Show(sender.GetType().Name);    
+
+            ((MainWindow)Application.Current.MainWindow).SortList();
+        }        
     }
 }

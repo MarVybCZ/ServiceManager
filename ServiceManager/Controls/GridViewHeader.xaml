@@ -5,9 +5,14 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ServiceManager.Controls"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
-    <Grid x:Name="LayoutRoot">
-        <TextBlock Width="auto" Name="TBData" TextWrapping="Wrap" Height="40px" Text="{Binding ColumnData}" ToolTipService.IsEnabled="True" Margin="0,0,0,0">
+             d:DesignHeight="300" d:DesignWidth="300" Width="auto" Height="auto" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0,0,0,0"              
+             MouseDown="HeaderMouseDown" >
+    <Grid x:Name="LayoutRoot" Width="auto" Height="auto" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0,0,0,0" Background="AliceBlue">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="15"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock  VerticalAlignment="Center" Width="auto" Name="TBData" TextWrapping="Wrap" Text="{Binding ColumnData}" ToolTipService.IsEnabled="True" Margin="0,0,0,0" HorizontalAlignment="Center" Padding="0,0,0,0" Grid.Column="0">
             <TextBlock.ToolTip>
                 <ToolTip>
                     <StackPanel>
@@ -17,6 +22,7 @@
                     </StackPanel>
                 </ToolTip>
             </TextBlock.ToolTip>
-            </TextBlock>
+        </TextBlock>
+        <TextBlock VerticalAlignment="Center" FontFamily="{StaticResource FontAwesome}" Text="&#xf0d7;" Grid.Column="1"/>
     </Grid>
 </UserControl>

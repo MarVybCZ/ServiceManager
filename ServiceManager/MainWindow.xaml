@@ -7,18 +7,21 @@
         xmlns:ctrl="clr-namespace:ServiceManager.Controls"        
         mc:Ignorable="d"
         Title="MainWindow" Height="750" Width="950">
-    <Grid>        
-        <ListView x:Name="LVServices" Margin="10,120,10,10" >
+    <Grid>
+        <Grid Margin="190,10,488,612.4">
+            <TextBlock Padding="0,0,0,0" VerticalAlignment="Stretch" Width="auto" Name="TBData" TextWrapping="Wrap" ToolTipService.IsEnabled="True" Margin="0,0,0,0" HorizontalAlignment="Stretch">sfsdfsdfsdfsdf</TextBlock>
+        </Grid>
+        <ListView x:Name="LVServices" Margin="10,120,10,10">
             <ListView.View>
-                <GridView>                    
+                <GridView ColumnHeaderContainerStyle="{StaticResource HeaderStyle}" >
                     <GridViewColumn Width="150">
                         <GridViewColumn.HeaderTemplate>
                             <DataTemplate>
-                                <ctrl:GridViewTextColumn ColumnData="Service name" ></ctrl:GridViewTextColumn>
+                                <ctrl:GridViewHeader ColumnData="Service name" ></ctrl:GridViewHeader>
                             </DataTemplate>
-                        </GridViewColumn.HeaderTemplate>
+                        </GridViewColumn.HeaderTemplate>                        
                         <GridViewColumn.CellTemplate>
-                            <DataTemplate>                                
+                            <DataTemplate>
                                 <ctrl:GridViewTextColumn ColumnData="{Binding ServiceName}" ></ctrl:GridViewTextColumn>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
@@ -26,7 +29,7 @@
                     <GridViewColumn Width="200" >
                         <GridViewColumn.HeaderTemplate>
                             <DataTemplate>
-                                <ctrl:GridViewTextColumn ColumnData="Display name" ></ctrl:GridViewTextColumn>
+                                <ctrl:GridViewHeader ColumnData="Display name" ></ctrl:GridViewHeader>
                             </DataTemplate>
                         </GridViewColumn.HeaderTemplate>
                         <GridViewColumn.CellTemplate>
@@ -38,7 +41,7 @@
                     <GridViewColumn Width="80">
                         <GridViewColumn.HeaderTemplate>
                             <DataTemplate>
-                                <ctrl:GridViewTextColumn ColumnData="Pause and continue" ></ctrl:GridViewTextColumn>
+                                <ctrl:GridViewHeader ColumnData="Pause and continue" ></ctrl:GridViewHeader>
                             </DataTemplate>
                         </GridViewColumn.HeaderTemplate>
                         <GridViewColumn.CellTemplate>
@@ -55,7 +58,9 @@
                                         <ToolTip>
                                             <StackPanel>
                                                 <TextBlock FontWeight="Bold" Text="{Binding CanRaiseEvents}"/>
-                                                --><!--<TextBlock>Submits the request to the server.</TextBlock>--><!--
+                                                -->
+                    <!--<TextBlock>Submits the request to the server.</TextBlock>-->
+                    <!--
                                             </StackPanel>
                                         </ToolTip>
                                     </TextBlock.ToolTip>
@@ -66,7 +71,7 @@
                     <GridViewColumn Width="50">
                         <GridViewColumn.HeaderTemplate>
                             <DataTemplate>
-                                <ctrl:GridViewTextColumn ColumnData="Can shutdown" ></ctrl:GridViewTextColumn>
+                                <ctrl:GridViewHeader ColumnData="Can shutdown" ></ctrl:GridViewHeader>
                             </DataTemplate>
                         </GridViewColumn.HeaderTemplate>
                         <GridViewColumn.CellTemplate>
@@ -78,7 +83,7 @@
                     <GridViewColumn Width="50">
                         <GridViewColumn.HeaderTemplate>
                             <DataTemplate>
-                                <ctrl:GridViewTextColumn ColumnData="Can stop" ></ctrl:GridViewTextColumn>
+                                <ctrl:GridViewHeader ColumnData="Can stop" ></ctrl:GridViewHeader>
                             </DataTemplate>
                         </GridViewColumn.HeaderTemplate>
                         <GridViewColumn.CellTemplate>
@@ -90,7 +95,7 @@
                     <GridViewColumn Width="50" >
                         <GridViewColumn.HeaderTemplate>
                             <DataTemplate>
-                                <ctrl:GridViewTextColumn ColumnData="Dependent services" ></ctrl:GridViewTextColumn>
+                                <ctrl:GridViewHeader ColumnData="Dependent services" ></ctrl:GridViewHeader>
                             </DataTemplate>
                         </GridViewColumn.HeaderTemplate>
                         <GridViewColumn.CellTemplate>
@@ -102,7 +107,7 @@
                     <!--<GridViewColumn Width="50" >
                         <GridViewColumn.HeaderTemplate>
                             <DataTemplate>
-                                <ctrl:GridViewTextColumn ColumnData="Machine name" ></ctrl:GridViewTextColumn>
+                                <ctrl:GridViewHeader ColumnData="Machine name" ></ctrl:GridViewHeader>
                             </DataTemplate>
                         </GridViewColumn.HeaderTemplate>
                         <GridViewColumn.CellTemplate>
@@ -114,7 +119,7 @@
                     <GridViewColumn Width="50" >
                         <GridViewColumn.HeaderTemplate>
                             <DataTemplate>
-                                <ctrl:GridViewTextColumn ColumnData="Service handle" ></ctrl:GridViewTextColumn>
+                                <ctrl:GridViewHeader ColumnData="Service handle" ></ctrl:GridViewHeader>
                             </DataTemplate>
                         </GridViewColumn.HeaderTemplate>
                         <GridViewColumn.CellTemplate>
@@ -126,7 +131,7 @@
                     <GridViewColumn Width="50" >
                         <GridViewColumn.HeaderTemplate>
                             <DataTemplate>
-                                <ctrl:GridViewTextColumn ColumnData="Services depended on" ></ctrl:GridViewTextColumn>
+                                <ctrl:GridViewHeader ColumnData="Services depended on" ></ctrl:GridViewHeader>
                             </DataTemplate>
                         </GridViewColumn.HeaderTemplate>
                         <GridViewColumn.CellTemplate>
@@ -138,7 +143,7 @@
                     <GridViewColumn Width="50" >
                         <GridViewColumn.HeaderTemplate>
                             <DataTemplate>
-                                <ctrl:GridViewTextColumn ColumnData="Service type" ></ctrl:GridViewTextColumn>
+                                <ctrl:GridViewHeader ColumnData="Service type" ></ctrl:GridViewHeader>
                             </DataTemplate>
                         </GridViewColumn.HeaderTemplate>
                         <GridViewColumn.CellTemplate>
@@ -150,7 +155,7 @@
                     <GridViewColumn Width="50" >
                         <GridViewColumn.HeaderTemplate>
                             <DataTemplate>
-                                <ctrl:GridViewTextColumn ColumnData="Site" ></ctrl:GridViewTextColumn>
+                                <ctrl:GridViewHeader ColumnData="Site" ></ctrl:GridViewHeader>
                             </DataTemplate>
                         </GridViewColumn.HeaderTemplate>
                         <GridViewColumn.CellTemplate>
@@ -162,7 +167,7 @@
                     <GridViewColumn Width="50" >
                         <GridViewColumn.HeaderTemplate>
                             <DataTemplate>
-                                <ctrl:GridViewTextColumn ColumnData="Start type" ></ctrl:GridViewTextColumn>
+                                <ctrl:GridViewHeader ColumnData="Start type" ></ctrl:GridViewHeader>
                             </DataTemplate>
                         </GridViewColumn.HeaderTemplate>
                         <GridViewColumn.CellTemplate>
@@ -174,7 +179,7 @@
                     <GridViewColumn Width="50" >
                         <GridViewColumn.HeaderTemplate>
                             <DataTemplate>
-                                <ctrl:GridViewTextColumn ColumnData="Status" ></ctrl:GridViewTextColumn>
+                                <ctrl:GridViewHeader ColumnData="Status" ></ctrl:GridViewHeader>
                             </DataTemplate>
                         </GridViewColumn.HeaderTemplate>
                         <GridViewColumn.CellTemplate>
