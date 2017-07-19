@@ -17,6 +17,6 @@
                     </StackPanel>
                 </ToolTip>
             </TextBlock.ToolTip>
-    </TextBlock>
+        </TextBlock>
     </Grid>
 </UserControl>
