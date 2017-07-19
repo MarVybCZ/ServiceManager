@@ -33,14 +33,16 @@ namespace ServiceManager
             this.DataContext = this;
 
             services = ServiceController.GetServices().ToList();
-            
-            LVServices.ItemsSource = services.OrderBy(x => x.ServiceName);
 
-            //Application.Current.MainWindow.
+            //LVServices.ItemsSource = services.OrderBy(x => x.ServiceName);
+
+            DGServices.ItemsSource = services.OrderBy(x => x.ServiceName);
+
+
         }
 
         public void SortList() {
-            LVServices.ItemsSource = services.OrderBy(x => "Status");
+            //LVServices.ItemsSource = services.OrderBy(x => "Status");
         }   
     }
 }

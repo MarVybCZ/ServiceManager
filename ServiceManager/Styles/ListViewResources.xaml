@@ -22,4 +22,5 @@
         <Setter Property="VerticalContentAlignment" Value="Stretch"/>
         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
     </Style>
+
 </ResourceDictionary>
