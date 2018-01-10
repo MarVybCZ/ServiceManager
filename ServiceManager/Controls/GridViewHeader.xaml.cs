@@ -37,9 +37,7 @@ namespace ServiceManager.Controls
 
         private void HeaderMouseDown(object sender, MouseButtonEventArgs e)
         {
-            //MessageBox.Show(sender.GetType().Name);    
-
-            ((MainWindow)Application.Current.MainWindow).SortList();
+            
         }        
     }
 }

@@ -5,19 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace ServiceManager.PInvoke
-{
-
-    [System.Runtime.InteropServices.StructLayoutAttribute(System.Runtime.InteropServices.LayoutKind.Sequential)]
-    public struct SC_HANDLE__
-    {
-
-        /// int
-        public IntPtr unused;
-    }
-
+{     
     public partial class NativeMethods
     {
-
         /// Return Type: BOOL->int
         ///hService: SC_HANDLE->SC_HANDLE__*
         ///dwServiceType: DWORD->unsigned int

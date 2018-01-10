@@ -40,6 +40,8 @@ namespace ServiceManager
             {
                 ListSortDirection.Ascending,
                 null,
+                null,
+                null,
                 null
             };
 
@@ -48,12 +50,6 @@ namespace ServiceManager
             DGServices.Columns[0].SortDirection = ListSortDirection.Ascending;
 
             DGServices.ItemsSource = services;
-
-        }
-
-        public void SortList()
-        {
-            //LVServices.ItemsSource = services.OrderBy(x => "Status");
         }
 
         private void DGServices_ContextMenuOpening(object sender, ContextMenuEventArgs e)
@@ -228,12 +224,68 @@ namespace ServiceManager
 
         private void DGServices_Sorting(object sender, DataGridSortingEventArgs e)
         {
-            foreach (var column in DGServices.Columns)
-            {
-                if (column != e.Column)
-                    column.SortDirection = column.SortDirection;
+            var index = 0;
 
+            //for all columns from datagrid
+            for (var i = 0; i < DGServices.Columns.Count; i++)
+            {
+                //select column
+                var column = DGServices.Columns[i];                
+
+                //if selected column is not clicked
+                if (column != e.Column)
+                    //set stored sorting for column
+                    column.SortDirection = sorting[i];
+                else
+                {
+                    index = i;
+
+                    //set 
+                    switch (column.SortDirection)
+                    {
+                        case ListSortDirection.Ascending:
+                            sorting[i] = column.SortDirection = ListSortDirection.Descending;
+                            break;
+
+                        case ListSortDirection.Descending:
+                            sorting[i] = column.SortDirection = null;
+                            break;
+
+                        default:
+                            sorting[i] = column.SortDirection = ListSortDirection.Ascending;
+                            break;
+                    }
+                }
             }
+
+            List<ServiceController> ordered = null;
+
+            if (sorting[index] != null)
+            {
+                if (sorting[index].Value == ListSortDirection.Ascending)
+                    //ordered = services.OrderBy(x => x.ServiceName).ToList();
+                    ordered = services.OrderBy(x => DGServices.Columns[index].SortMemberPath).ToList();
+
+                if (sorting[index].Value == ListSortDirection.Descending)
+                    ordered = services.OrderByDescending(x => DGServices.Columns[index].SortMemberPath).ToList();
+            }
+            else
+                ordered = services;
+            /*
+            if (sorting[1] != null)
+            {
+                if (sorting[1].Value == ListSortDirection.Ascending)
+                    ordered = services.OrderBy(x => x.ServiceName).ToList();
+
+                if (sorting[1].Value == ListSortDirection.Descending)
+                    ordered = services.OrderByDescending(x => x.ServiceName).ToList();
+            }
+            else
+                ordered = services;*/
+
+            DGServices.ItemsSource = ordered;
+
+            e.Handled = true;
         }
     }
 }
