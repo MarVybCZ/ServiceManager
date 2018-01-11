@@ -11,7 +11,7 @@ namespace ServiceManager
     {
         void HeaderMouseDown(object sender, RoutedEventArgs e)
         {
-            var x = 1 + 1;
+            //var x = 1 + 1;
         }
     }
 }
