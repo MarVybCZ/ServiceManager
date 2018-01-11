@@ -222,15 +222,25 @@ namespace ServiceManager
             DGServices.ItemsSource = services;
         }
 
+        /// <summary>
+        /// Event for sort the list
+        /// Unfortunately the is a problem with non string values. They are sorted incorectly
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void DGServices_Sorting(object sender, DataGridSortingEventArgs e)
         {
+            //multiple orderby 
+            //https://stackoverflow.com/questions/3047455/linq-orderby-with-more-than-one-field
+            //orderby().thenby()
+
             var index = 0;
 
             //for all columns from datagrid
             for (var i = 0; i < DGServices.Columns.Count; i++)
             {
                 //select column
-                var column = DGServices.Columns[i];                
+                var column = DGServices.Columns[i];
 
                 //if selected column is not clicked
                 if (column != e.Column)
@@ -258,34 +268,64 @@ namespace ServiceManager
                 }
             }
 
-            List<ServiceController> ordered = null;
+            List<ServiceController> ordered = (List<ServiceController>)DGServices.ItemsSource;
 
             if (sorting[index] != null)
             {
-                if (sorting[index].Value == ListSortDirection.Ascending)
-                    //ordered = services.OrderBy(x => x.ServiceName).ToList();
-                    ordered = services.OrderBy(x => DGServices.Columns[index].SortMemberPath).ToList();
+                switch (DGServices.Columns[index].SortMemberPath)
+                {
 
-                if (sorting[index].Value == ListSortDirection.Descending)
-                    ordered = services.OrderByDescending(x => DGServices.Columns[index].SortMemberPath).ToList();
-            }
-            else
-                ordered = services;
-            /*
-            if (sorting[1] != null)
-            {
-                if (sorting[1].Value == ListSortDirection.Ascending)
-                    ordered = services.OrderBy(x => x.ServiceName).ToList();
+                    case "ServiceName":
+                        ordered = sortList(sorting[index].Value, ordered, x => x.ServiceName);
+                        break;
 
-                if (sorting[1].Value == ListSortDirection.Descending)
-                    ordered = services.OrderByDescending(x => x.ServiceName).ToList();
+                    case "DisplayName":
+                        ordered = sortList(sorting[index].Value, ordered, x => x.DisplayName);
+                        break;
+
+                    case "StartType":
+                        ordered = sortList(sorting[index].Value, ordered, x => x.StartType);
+                        break;
+
+                    case "Status":
+                        ordered = sortList(sorting[index].Value, ordered, x => x.Status);
+                        break;
+
+                    case "ServiceType":
+                        ordered = sortList(sorting[index].Value, ordered, x => x.ServiceType);
+                        break;
+
+                    //if (sorting[index].Value == ListSortDirection.Ascending)                    
+                    //    ordered = ordered.OrderBy(x => DGServices.Columns[index].SortMemberPath).ToList();
+
+                    //if (sorting[index].Value == ListSortDirection.Descending)
+                    //    ordered = ordered.OrderByDescending(x => DGServices.Columns[index].SortMemberPath).ToList();
+
+                    default:
+                        break;
+
+                }
             }
-            else
-                ordered = services;*/
 
             DGServices.ItemsSource = ordered;
 
+            for (var i = 0; i < DGServices.Columns.Count; i++)
+            {
+                DGServices.Columns[i].SortDirection = sorting[i];
+            }
+
             e.Handled = true;
+        }
+
+        private List<ServiceController> sortList(ListSortDirection direction, List<ServiceController> list, Func<ServiceController, Object> keySelector)
+        {
+            if (direction == ListSortDirection.Ascending)
+                list = list.OrderBy(keySelector).ToList();
+
+            if (direction == ListSortDirection.Descending)
+                list = list.OrderByDescending(keySelector).ToList();
+
+            return list;
         }
     }
 }
