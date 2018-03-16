@@ -57,6 +57,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Classes\Group.cs" />
+    <Compile Include="Classes\ServiceWrapper.cs" />
+    <Compile Include="Dialogs\EditGroupDialog.xaml.cs">
+      <DependentUpon>EditGroupDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="PInvoke\NativeMethods.cs" />
     <Compile Include="Styles\ListViewResources.xaml.cs" />
     <Page Include="Controls\GridViewHeader.xaml">
@@ -64,6 +69,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\GridViewTextColumn.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\EditGroupDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

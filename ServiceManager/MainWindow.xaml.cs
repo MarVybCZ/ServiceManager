@@ -16,6 +16,8 @@ using System.ServiceProcess;
 using System.Collections;
 using System.Diagnostics;
 using System.ComponentModel;
+using ServiceManager.Dialogs;
+using ServiceManager.Classes;
 
 namespace ServiceManager
 {
@@ -26,7 +28,11 @@ namespace ServiceManager
     {
         private List<ServiceController> services;
 
+        private List<Group> groups = new List<Group>();
+
         private List<ListSortDirection?> sorting;
+
+        public List<Group> Groups { get { return groups; } set { groups = value; } }
 
         public MainWindow()
         {
@@ -112,9 +118,49 @@ namespace ServiceManager
             }
         }
 
+        /// <summary>
+        /// Event solving the creation of new group
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void CreateGroup_Click(object sender, RoutedEventArgs e)
         {
+            ShowCreateGroupDialog();
+        }
 
+        private void ShowCreateGroupDialog()
+        {
+            var dialog = new EditGroupDialog();
+            dialog.Title = "Create new group";
+            if (dialog.ShowDialog() == true)
+            {
+                //MessageBox.Show("You said: " + dialog.ResponseText);
+
+                if (dialog.ResponseText.Length == 0)
+                {
+                    MessageBox.Show("Group name cannot be empty");
+
+                    return;
+                }
+
+                if (Groups.Where(x => x.Name == dialog.ResponseText).Count() > 0)
+                {
+                    MessageBox.Show("Group with this name already exists");
+
+                    return;
+                }
+
+                if (DGServices.SelectedItems.Count == 0)
+                {
+                    if (MessageBox.Show("There are no services selected. Do you want to continue?", "No selected services", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
+                        return;
+                }
+
+                var group = new Group(dialog.ResponseText);
+                group.AddServiceRange(DGServices.SelectedItems);
+
+                Groups.Add(group);
+            }
         }
 
         private void AddToGroup_Click(object sender, RoutedEventArgs e)
