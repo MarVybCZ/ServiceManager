@@ -139,6 +139,8 @@ namespace ServiceManager
                 if (dialog.ResponseText.Length == 0)
                 {
                     MessageBox.Show("Group name cannot be empty");
+
+                    return;
                 }
 
                 if (Groups.Where(x => x.Name == dialog.ResponseText).Count() > 0)
@@ -148,7 +150,14 @@ namespace ServiceManager
                     return;
                 }
 
+                if (DGServices.SelectedItems.Count == 0)
+                {
+                    if (MessageBox.Show("There are no services selected. Do you want to continue?", "No selected services", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
+                        return;
+                }
+
                 var group = new Group(dialog.ResponseText);
+                group.AddServiceRange(DGServices.SelectedItems);
 
                 Groups.Add(group);
             }
