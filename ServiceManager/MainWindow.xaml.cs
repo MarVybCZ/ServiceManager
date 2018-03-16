@@ -28,11 +28,11 @@ namespace ServiceManager
     {
         private List<ServiceController> services;
 
-        private List<Group> groups;
+        private List<Group> groups = new List<Group>();
 
         private List<ListSortDirection?> sorting;
 
-        public List<Group> Groups { get { return groups; } set { groups = value; } }        
+        public List<Group> Groups { get { return groups; } set { groups = value; } }
 
         public MainWindow()
         {
@@ -125,13 +125,32 @@ namespace ServiceManager
         /// <param name="e"></param>
         private void CreateGroup_Click(object sender, RoutedEventArgs e)
         {
+            ShowCreateGroupDialog();
+        }
+
+        private void ShowCreateGroupDialog()
+        {
             var dialog = new EditGroupDialog();
             dialog.Title = "Create new group";
             if (dialog.ShowDialog() == true)
             {
                 //MessageBox.Show("You said: " + dialog.ResponseText);
 
+                if (dialog.ResponseText.Length == 0)
+                {
+                    MessageBox.Show("Group name cannot be empty");
+                }
+
+                if (Groups.Where(x => x.Name == dialog.ResponseText).Count() > 0)
+                {
+                    MessageBox.Show("Group with this name already exists");
+
+                    return;
+                }
+
                 var group = new Group(dialog.ResponseText);
+
+                Groups.Add(group);
             }
         }
 
