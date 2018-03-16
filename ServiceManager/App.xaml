@@ -3,7 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:ServiceManager"
              StartupUri="MainWindow.xaml">
-    <Application.Resources>
-         
+    <Application.Resources>        
+        <ResourceDictionary>
+            <FontFamily x:Key="FontAwesome">/Fonts/fontawesome-webfont.ttf#FontAwesome</FontFamily>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles\ListViewResources.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

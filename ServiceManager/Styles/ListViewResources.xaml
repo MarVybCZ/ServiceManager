@@ -1,0 +1,26 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:ServiceManager"
+                    x:Class="ServiceManager.ListViewResources">
+    <DataTemplate x:Key="HeaderTemplate">
+        <Grid MouseDown="HeaderMouseDown">
+            <TextBlock Width="auto" Text="{Binding}" ToolTipService.IsEnabled="True">
+                <TextBlock.ToolTip>
+                    <ToolTip>
+                        <StackPanel>
+                            <TextBlock FontWeight="Bold" Text="{Binding}"/>
+                            <!--<TextBlock>Submits the request to the server.</TextBlock>-->
+                        </StackPanel>
+                    </ToolTip>
+                </TextBlock.ToolTip>
+            </TextBlock>
+        </Grid>
+    </DataTemplate>
+    <Style x:Key="HeaderStyle" TargetType="{x:Type GridViewColumnHeader}">
+        <Setter Property="VerticalAlignment" Value="Stretch"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+    </Style>
+
+</ResourceDictionary>
