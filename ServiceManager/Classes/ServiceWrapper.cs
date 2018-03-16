@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ServiceManager.Classes
 {
-    class ServiceWrapper
+    public class ServiceWrapper
     {
         public string ServiceName { get; set; }
         

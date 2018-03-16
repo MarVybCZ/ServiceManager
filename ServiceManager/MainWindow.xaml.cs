@@ -16,6 +16,8 @@ using System.ServiceProcess;
 using System.Collections;
 using System.Diagnostics;
 using System.ComponentModel;
+using ServiceManager.Dialogs;
+using ServiceManager.Classes;
 
 namespace ServiceManager
 {
@@ -26,7 +28,11 @@ namespace ServiceManager
     {
         private List<ServiceController> services;
 
+        private List<Group> groups;
+
         private List<ListSortDirection?> sorting;
+
+        public List<Group> Groups { get { return groups; } set { groups = value; } }        
 
         public MainWindow()
         {
@@ -112,9 +118,21 @@ namespace ServiceManager
             }
         }
 
+        /// <summary>
+        /// Event solving the creation of new group
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void CreateGroup_Click(object sender, RoutedEventArgs e)
         {
+            var dialog = new EditGroupDialog();
+            dialog.Title = "Create new group";
+            if (dialog.ShowDialog() == true)
+            {
+                //MessageBox.Show("You said: " + dialog.ResponseText);
 
+                var group = new Group(dialog.ResponseText);
+            }
         }
 
         private void AddToGroup_Click(object sender, RoutedEventArgs e)
