@@ -30,11 +30,11 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Margin="0,2">
-                            <TextBlock Text="{Binding Name}"></TextBlock>
-                            <ListBox ItemsSource="{Binding Services}">
+                            <TextBlock Text="{Binding Name}" Margin="0,0,0,0"></TextBlock>
+                            <ListBox ItemsSource="{Binding Services}" Margin="0,0,0,0">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
-                                        <StackPanel Margin="0,2">
+                                        <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,2">
                                             <TextBlock Text="{Binding ServiceName}"></TextBlock>
                                         </StackPanel>
                                     </DataTemplate>
