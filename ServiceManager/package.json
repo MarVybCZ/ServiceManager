@@ -1,3 +1,24 @@
 {
-  "url": "https://github.com/charri/Font-Awesome-WPF/"
+  "url": "https://github.com/charri/Font-Awesome-WPF/",
+  "name": "servicemanager",
+  "version": "1.0.0",
+  "description": "Windows service manager",
+  "main": "index.js",
+  "dependencies": {
+    "Font-Awesome-WPF": "charri/Font-Awesome-WPF"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MarVybCZ/ServiceManager.git"
+  },
+  "author": "Martin Vybiral",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MarVybCZ/ServiceManager/issues"
+  },
+  "homepage": "https://github.com/MarVybCZ/ServiceManager#readme"  
 }
