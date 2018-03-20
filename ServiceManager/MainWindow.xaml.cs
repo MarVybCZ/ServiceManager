@@ -56,13 +56,15 @@ namespace ServiceManager
             DGServices.Columns[0].SortDirection = ListSortDirection.Ascending;
 
             DGServices.ItemsSource = services;
+
+            LBGroups.ItemsSource = Groups;
         }
 
         private void DGServices_ContextMenuOpening(object sender, ContextMenuEventArgs e)
         {
             DataGrid grid = ((DataGrid)sender);
 
-            MICreateGroup.IsEnabled = false;
+            //MICreateGroup.IsEnabled = false;
             MIAddToGroup.IsEnabled = false;
 
             MIContinueServices.IsEnabled = false;
@@ -126,6 +128,10 @@ namespace ServiceManager
         private void CreateGroup_Click(object sender, RoutedEventArgs e)
         {
             ShowCreateGroupDialog();
+
+            LBGroups.ItemsSource = null;
+
+            LBGroups.ItemsSource = Groups;
         }
 
         private void ShowCreateGroupDialog()
