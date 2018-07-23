@@ -9,6 +9,10 @@ namespace ServiceManager.Classes
 {
     public class ServiceWrapper
     {
+        public ServiceWrapper()
+        {
+        }
+
         public ServiceWrapper(ServiceController sw)
         {
             this.ServiceName = sw.ServiceName;

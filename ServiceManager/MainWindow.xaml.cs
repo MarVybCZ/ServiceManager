@@ -18,6 +18,10 @@ using System.Diagnostics;
 using System.ComponentModel;
 using ServiceManager.Dialogs;
 using ServiceManager.Classes;
+using System.Xml.Serialization;
+using System.IO;
+using System.Xml;
+using Newtonsoft.Json;
 
 namespace ServiceManager
 {
@@ -27,18 +31,13 @@ namespace ServiceManager
     public partial class MainWindow : Window
     {
         private List<ServiceController> services;
-
-        private List<Group> groups = new List<Group>();
-
         private List<ListSortDirection?> sorting;
 
-        public List<Group> Groups { get { return groups; } set { groups = value; } }
+        public List<Group> Groups { get; } = new List<Group>();
 
         public MainWindow()
         {
             InitializeComponent();
-
-            //this.DataContext = this;
 
             services = ServiceController.GetServices().ToList().OrderBy(x => x.ServiceName).ToList();
 
@@ -50,8 +49,6 @@ namespace ServiceManager
                 null,
                 null
             };
-
-            //LVServices.ItemsSource = services.OrderBy(x => x.ServiceName);
 
             DGServices.Columns[0].SortDirection = ListSortDirection.Ascending;
 
@@ -136,8 +133,11 @@ namespace ServiceManager
 
         private void ShowCreateGroupDialog()
         {
-            var dialog = new EditGroupDialog();
-            dialog.Title = "Create new group";
+            var dialog = new EditGroupDialog()
+            {
+                Title = "Create new group"
+            };
+
             if (dialog.ShowDialog() == true)
             {
                 //MessageBox.Show("You said: " + dialog.ResponseText);
@@ -378,6 +378,81 @@ namespace ServiceManager
                 list = list.OrderByDescending(keySelector).ToList();
 
             return list;
+        }
+
+        private void Window_Initialized(object sender, EventArgs e)
+        {
+            LoadGroups();
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            SaveGroups();
+        }
+
+        private void LoadGroups()
+        {
+            try
+            {
+                //    XmlSerializer serializer = new XmlSerializer(typeof(IEnumerable<Group>));                
+
+                //    var path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "//data.xml";
+
+                //    if (File.Exists(path))
+                //    {
+                //        using (System.IO.FileStream file = System.IO.File.OpenRead(path))
+                //        {
+                //            var x = (List<Group>)serializer.Deserialize(file);
+
+                //            Groups.AddRange(x);
+                //            file.Close();
+                //        }
+                //    }               
+
+                //var path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "//data.json";
+
+                var path = "data.json";
+
+                if (File.Exists(path))
+                {
+                    Groups.AddRange(JsonConvert.DeserializeObject<List<Group>>(File.ReadAllText(path)));
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Unable to load data.", "Error");
+            }
+        }
+
+        private void SaveGroups()
+        {
+            //try
+            //{
+            //    XmlSerializer serializer = new XmlSerializer(typeof(List<Group>));
+
+            //    var path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "//data.xml";
+            //    using (System.IO.FileStream file = System.IO.File.Create(path))
+            //    {
+            //        serializer.Serialize(file, Groups);
+            //        file.Close();
+            //    }
+            //}
+            //catch (Exception e)
+            //{
+            //    MessageBox.Show("Unable to save data.", "Error");
+            //}
+
+            try
+            {
+                //var path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "//data.json";
+
+                var path = "data.json";
+
+                var text = JsonConvert.SerializeObject(Groups);
+
+                File.WriteAllText(path, text);
+            }
+            catch (Exception e) { MessageBox.Show("Unable to save data.", "Error"); }
         }
     }
 }

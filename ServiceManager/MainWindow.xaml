@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ServiceManager"        
         xmlns:ctrl="clr-namespace:ServiceManager.Controls"        
         mc:Ignorable="d"
-        Title="MainWindow" Height="750" Width="950">
+        Title="MainWindow" Height="750" Width="950" Initialized="Window_Initialized" Closed="Window_Closed">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="26"/>
