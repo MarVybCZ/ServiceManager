@@ -168,10 +168,30 @@ namespace ServiceManager
                 Groups.Add(group);
             }
         }
-
+        
         private void AddToGroup_Click(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void RemoveGroup_Click(object sender, RoutedEventArgs e)
+        {
+            Group group = LBGroups.SelectedItem as Group;
+
+            if (group != null)
+                RemoveGroup(group);
+        }
+
+        private void RemoveGroup(Group group)
+        {
+            MessageBoxResult result = MessageBox.Show("Do you realy want to remove group '" + group.Name + "'?", "Warning", MessageBoxButton.YesNo);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                Groups.Remove(group);
+
+                LBGroups.Items.Refresh();                
+            }
         }
 
         private void StartServices_Click(object sender, RoutedEventArgs e)
@@ -409,13 +429,9 @@ namespace ServiceManager
                 //        }
                 //    }               
 
-                //var path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "//data.json";
-
-                var path = "data.json";
-
-                if (File.Exists(path))
+                if (File.Exists("data.json"))
                 {
-                    Groups.AddRange(JsonConvert.DeserializeObject<List<Group>>(File.ReadAllText(path)));
+                    Groups.AddRange(JsonConvert.DeserializeObject<List<Group>>(File.ReadAllText("data.json")));
                 }
             }
             catch (Exception e)
@@ -444,15 +460,12 @@ namespace ServiceManager
 
             try
             {
-                //var path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "//data.json";
-
-                var path = "data.json";
-
-                var text = JsonConvert.SerializeObject(Groups);
-
-                File.WriteAllText(path, text);
+                File.WriteAllText("data.json", JsonConvert.SerializeObject(Groups));
             }
-            catch (Exception e) { MessageBox.Show("Unable to save data.", "Error"); }
-        }
+            catch (Exception e)
+            {
+                MessageBox.Show("Unable to save data.", "Error");
+            }
+        }        
     }
 }
