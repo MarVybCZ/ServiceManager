@@ -98,11 +98,24 @@ namespace ServiceManager
         {
             try
             {
-                // Refresh the services list to get updated status
-                foreach (var service in services)
+                // Dispose old services to free resources
+                if (services != null)
                 {
-                    service.Refresh();
+                    foreach (var service in services)
+                    {
+                        try
+                        {
+                            service?.Dispose();
+                        }
+                        catch 
+                        {
+                            // Ignore disposal errors
+                        }
+                    }
                 }
+
+                // Get fresh services list
+                services = ServiceController.GetServices().ToList().OrderBy(x => x.ServiceName).ToList();
                 
                 DGServices.ItemsSource = null;
                 DGServices.ItemsSource = services;
@@ -598,6 +611,35 @@ namespace ServiceManager
         private void Window_Closed(object sender, EventArgs e)
         {
             SaveGroups();
+            
+            // Clean up service resources
+            CleanupResources();
+        }
+
+        private void CleanupResources()
+        {
+            try
+            {
+                if (services != null)
+                {
+                    foreach (var service in services)
+                    {
+                        try
+                        {
+                            service?.Dispose();
+                        }
+                        catch
+                        {
+                            // Ignore disposal errors
+                        }
+                    }
+                    services.Clear();
+                }
+            }
+            catch
+            {
+                // Ignore cleanup errors
+            }
         }
 
         private void LoadGroups()
