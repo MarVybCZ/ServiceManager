@@ -40,14 +40,11 @@ namespace ServiceManager
         {
             InitializeComponent();
 
-            // Check if running as administrator
-            if (!IsRunningAsAdministrator())
-            {
-                MessageBox.Show("This application requires administrator privileges to manage Windows services.\nPlease run as administrator.", 
-                    "Administrator Privileges Required", MessageBoxButton.OK, MessageBoxImage.Warning);
-            }
+            // Check permissions and show status
+            CheckAndDisplayPermissionStatus();
 
-            services = ServiceController.GetServices().ToList().OrderBy(x => x.ServiceName).ToList();
+            // Initialize services list
+            InitializeServicesWithErrorHandling();
 
             sorting = new List<ListSortDirection?>
             {
@@ -59,17 +56,62 @@ namespace ServiceManager
             };
 
             DGServices.Columns[0].SortDirection = ListSortDirection.Ascending;
-
-            DGServices.ItemsSource = services;
-
             LBGroups.ItemsSource = Groups;
+        }
+
+        private void CheckAndDisplayPermissionStatus()
+        {
+            if (!WindowsPermissionHelper.CanAccessWindowsServices())
+            {
+                MessageBox.Show("Unable to access Windows services. This application requires appropriate permissions to manage services.\n\nPlease run as administrator or check your system configuration.", 
+                    "Service Access Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            else if (!WindowsPermissionHelper.IsRunningAsAdministrator())
+            {
+                MessageBox.Show("This application requires administrator privileges to manage Windows services.\nSome operations may be limited without elevated permissions.\n\nPlease run as administrator for full functionality.", 
+                    "Administrator Privileges Recommended", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        private void InitializeServicesWithErrorHandling()
+        {
+            try
+            {
+                services = ServiceController.GetServices().ToList().OrderBy(x => x.ServiceName).ToList();
+                DGServices.ItemsSource = services;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to load Windows services: {ex.Message}\n\nPlease check your permissions and try running as administrator.", 
+                    "Service Loading Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                services = new List<ServiceController>(); // Initialize empty list to prevent crashes
+                DGServices.ItemsSource = services;
+            }
         }
 
         private bool IsRunningAsAdministrator()
         {
-            WindowsIdentity identity = WindowsIdentity.GetCurrent();
-            WindowsPrincipal principal = new WindowsPrincipal(identity);
-            return principal.IsInRole(WindowsBuiltInRole.Administrator);
+            return WindowsPermissionHelper.IsRunningAsAdministrator();
+        }
+
+        private void RefreshServicesList()
+        {
+            try
+            {
+                // Refresh the services list to get updated status
+                foreach (var service in services)
+                {
+                    service.Refresh();
+                }
+                
+                DGServices.ItemsSource = null;
+                DGServices.ItemsSource = services;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error refreshing services list: {ex.Message}", 
+                    "Refresh Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
         }
 
         private void DGServices_ContextMenuOpening(object sender, ContextMenuEventArgs e)
@@ -225,8 +267,7 @@ namespace ServiceManager
                         "Timeout Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
-            DGServices.ItemsSource = null;
-            DGServices.ItemsSource = services;
+            RefreshServicesList();
         }
 
         private void StopServices_Click(object sender, RoutedEventArgs e)
@@ -264,8 +305,7 @@ namespace ServiceManager
                         "Timeout Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
-            DGServices.ItemsSource = null;
-            DGServices.ItemsSource = services;
+            RefreshServicesList();
         }
 
         private void ContinueServices_Click(object sender, RoutedEventArgs e)
@@ -303,8 +343,7 @@ namespace ServiceManager
                         "Timeout Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
-            DGServices.ItemsSource = null;
-            DGServices.ItemsSource = services;
+            RefreshServicesList();
         }
 
         private void PauseServices_Click(object sender, RoutedEventArgs e)
@@ -342,8 +381,7 @@ namespace ServiceManager
                         "Timeout Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
-            DGServices.ItemsSource = null;
-            DGServices.ItemsSource = services;
+            RefreshServicesList();
         }
 
         private void AutomaticStart_Click(object sender, RoutedEventArgs e)
@@ -376,8 +414,7 @@ namespace ServiceManager
                         "Service Configuration Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
-            DGServices.ItemsSource = null;
-            DGServices.ItemsSource = services;
+            RefreshServicesList();
         }
 
         private void ManualStart_Click(object sender, RoutedEventArgs e)
@@ -410,8 +447,7 @@ namespace ServiceManager
                         "Service Configuration Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
-            DGServices.ItemsSource = null;
-            DGServices.ItemsSource = services;
+            RefreshServicesList();
         }
 
         private void DisabledStart_Click(object sender, RoutedEventArgs e)
@@ -445,8 +481,7 @@ namespace ServiceManager
                 }
             }
 
-            DGServices.ItemsSource = null;
-            DGServices.ItemsSource = services;
+            RefreshServicesList();
         }
 
         /// <summary>

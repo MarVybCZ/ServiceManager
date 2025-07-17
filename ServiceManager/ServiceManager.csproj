@@ -66,6 +66,7 @@
     </ApplicationDefinition>
     <Compile Include="Classes\Group.cs" />
     <Compile Include="Classes\ServiceWrapper.cs" />
+    <Compile Include="Classes\WindowsPermissionHelper.cs" />
     <Compile Include="Dialogs\EditGroupDialog.xaml.cs">
       <DependentUpon>EditGroupDialog.xaml</DependentUpon>
     </Compile>
