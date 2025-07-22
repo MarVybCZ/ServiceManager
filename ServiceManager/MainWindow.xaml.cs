@@ -274,7 +274,7 @@ namespace ServiceManager
                     MessageBox.Show($"Access denied starting service '{service.ServiceName}': {ex.Message}", 
                         "Permission Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
-                catch (TimeoutException)
+                catch (System.ServiceProcess.TimeoutException)
                 {
                     MessageBox.Show($"Service '{service.ServiceName}' failed to start within timeout period.", 
                         "Timeout Error", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -312,7 +312,7 @@ namespace ServiceManager
                     MessageBox.Show($"Access denied stopping service '{service.ServiceName}': {ex.Message}", 
                         "Permission Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
-                catch (TimeoutException)
+                catch (System.ServiceProcess.TimeoutException)
                 {
                     MessageBox.Show($"Service '{service.ServiceName}' failed to stop within timeout period.", 
                         "Timeout Error", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -350,7 +350,7 @@ namespace ServiceManager
                     MessageBox.Show($"Access denied continuing service '{service.ServiceName}': {ex.Message}", 
                         "Permission Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
-                catch (TimeoutException)
+                catch (System.ServiceProcess.TimeoutException)
                 {
                     MessageBox.Show($"Service '{service.ServiceName}' failed to continue within timeout period.", 
                         "Timeout Error", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -388,7 +388,7 @@ namespace ServiceManager
                     MessageBox.Show($"Access denied pausing service '{service.ServiceName}': {ex.Message}", 
                         "Permission Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
-                catch (TimeoutException)
+                catch (System.ServiceProcess.TimeoutException)
                 {
                     MessageBox.Show($"Service '{service.ServiceName}' failed to pause within timeout period.", 
                         "Timeout Error", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -664,7 +664,7 @@ namespace ServiceManager
                 //var path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "//data.json";
 
                 var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-                var appFolder = Path.Combine(appDataPath, "ServiceManager");
+                var appFolder = System.IO.Path.Combine(appDataPath, "ServiceManager");
                 
                 // Create app folder if it doesn't exist
                 if (!Directory.Exists(appFolder))
@@ -672,7 +672,7 @@ namespace ServiceManager
                     Directory.CreateDirectory(appFolder);
                 }
                 
-                var path = Path.Combine(appFolder, "data.json");
+                var path = System.IO.Path.Combine(appFolder, "data.json");
 
                 if (File.Exists(path))
                 {
@@ -708,7 +708,7 @@ namespace ServiceManager
                 //var path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "//data.json";
 
                 var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-                var appFolder = Path.Combine(appDataPath, "ServiceManager");
+                var appFolder = System.IO.Path.Combine(appDataPath, "ServiceManager");
                 
                 // Create app folder if it doesn't exist
                 if (!Directory.Exists(appFolder))
@@ -716,7 +716,7 @@ namespace ServiceManager
                     Directory.CreateDirectory(appFolder);
                 }
                 
-                var path = Path.Combine(appFolder, "data.json");
+                var path = System.IO.Path.Combine(appFolder, "data.json");
 
                 var text = JsonConvert.SerializeObject(Groups);
 
