@@ -16,7 +16,11 @@
         <ToolBarTray VerticalAlignment="Top" Grid.Row="0" Height="27" Grid.RowSpan="2">
             <ToolBar>
                 <Button Content="Create group" Click="CreateGroup_Click" />
+                <Button Content="Edit group" Click="EditGroup_Click" />
                 <Button Content="Remove group" Click="RemoveGroup_Click" />
+                <Separator />
+                <Button Content="Start group services" Click="StartGroupServices_Click" />
+                <Button Content="Stop group services" Click="StopGroupServices_Click" />
             </ToolBar>
         </ToolBarTray>
 
@@ -27,16 +31,28 @@
                 <ColumnDefinition Width="500*"/>
             </Grid.ColumnDefinitions>
 
-            <ListBox Grid.Column="0" Margin="10,10,15,10" Name="LBGroups">
+            <ListBox Grid.Column="0" Margin="10,10,15,10" Name="LBGroups" SelectionChanged="LBGroups_SelectionChanged">
+                <ListBox.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Edit group" Click="EditGroup_Click" />
+                        <MenuItem Header="Remove group" Click="RemoveGroup_Click" />
+                        <Separator />
+                        <MenuItem Header="Start all services" Click="StartGroupServices_Click" />
+                        <MenuItem Header="Stop all services" Click="StopGroupServices_Click" />
+                        <MenuItem Header="Pause all services" Click="PauseGroupServices_Click" />
+                        <MenuItem Header="Continue all services" Click="ContinueGroupServices_Click" />
+                    </ContextMenu>
+                </ListBox.ContextMenu>
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Margin="0,2">
-                            <TextBlock Text="{Binding Name}" Margin="0,0,0,0"></TextBlock>
+                            <TextBlock Text="{Binding Name}" Margin="0,0,0,0" FontWeight="Bold"></TextBlock>
+                            <TextBlock Text="{Binding Services.Count, StringFormat='{}{0} services'}" Margin="0,0,0,2" Foreground="Gray" FontSize="10"></TextBlock>
                             <ListBox ItemsSource="{Binding Services}" Margin="0,0,0,0">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
-                                        <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,2">
-                                            <TextBlock Text="{Binding ServiceName}"></TextBlock>
+                                        <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,1">
+                                            <TextBlock Text="{Binding ServiceName}" FontSize="10"></TextBlock>
                                         </StackPanel>
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>

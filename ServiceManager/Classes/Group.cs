@@ -48,5 +48,20 @@ namespace ServiceManager.Classes
                     this.AddService(new ServiceWrapper((ServiceController)sw));
             }
         }
+
+        public void RemoveService(ServiceWrapper service)
+        {
+            this.Services.Remove(service);
+        }
+
+        public void RemoveServiceByName(string serviceName)
+        {
+            this.Services.RemoveAll(s => s.ServiceName == serviceName);
+        }
+
+        public bool ContainsService(string serviceName)
+        {
+            return this.Services.Any(s => s.ServiceName == serviceName);
+        }
     }
 }
