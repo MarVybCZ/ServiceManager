@@ -5,12 +5,65 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ServiceManager.Dialogs"
         mc:Ignorable="d"
-        Title="EditGroupDialog" Height="300" Width="300">
+        Title="Edit Group" Height="550" Width="800" ResizeMode="CanResize">
     <Grid>
-        <StackPanel>
-            <TextBlock Text="Enter some text" />
-            <TextBox x:Name="ResponseTextBox" />
-            <Button Content="OK" Click="OKButton_Click" />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <!-- Group Name -->
+        <StackPanel Grid.Row="0" Margin="10">
+            <TextBlock Text="Group Name:" FontWeight="Bold" Margin="0,0,0,5"/>
+            <TextBox x:Name="ResponseTextBox" Height="25"/>
+        </StackPanel>
+        
+        <!-- Services Management -->
+        <Grid Grid.Row="1" Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            
+            <!-- Available Services -->
+            <StackPanel Grid.Column="0">
+                <TextBlock Text="Available Services:" FontWeight="Bold" Margin="0,0,0,5"/>
+                <TextBox x:Name="FilterTextBox" 
+                         Margin="0,0,0,5" Height="25" 
+                         TextChanged="FilterTextBox_TextChanged"/>
+                <TextBlock Text="Type to filter services..." Foreground="Gray" Margin="0,-30,5,5" 
+                           HorizontalAlignment="Left" VerticalAlignment="Center" 
+                           IsHitTestVisible="False" 
+                           x:Name="FilterPlaceholder"/>
+                <ListBox x:Name="AvailableServicesListBox" Height="300" SelectionMode="Extended"/>
+            </StackPanel>
+            
+            <!-- Control Buttons -->
+            <StackPanel Grid.Column="1" Margin="10,30,10,0" VerticalAlignment="Center">
+                <Button Content="→ Add" x:Name="AddServiceButton" Click="AddService_Click" 
+                        Margin="0,5" Padding="10,5" MinWidth="80"/>
+                <Button Content="← Remove" x:Name="RemoveServiceButton" Click="RemoveService_Click" 
+                        Margin="0,5" Padding="10,5" MinWidth="80"/>
+                <Button Content="→ Add All" x:Name="AddAllButton" Click="AddAll_Click" 
+                        Margin="0,15,0,5" Padding="10,5" MinWidth="80"/>
+                <Button Content="← Remove All" x:Name="RemoveAllButton" Click="RemoveAll_Click" 
+                        Margin="0,5" Padding="10,5" MinWidth="80"/>
+            </StackPanel>
+            
+            <!-- Group Services -->
+            <StackPanel Grid.Column="2">
+                <TextBlock Text="Services in Group:" FontWeight="Bold" Margin="0,0,0,5"/>
+                <TextBlock x:Name="ServiceCountLabel" Text="0 services" Foreground="Gray" Margin="0,0,0,5"/>
+                <ListBox x:Name="GroupServicesListBox" Height="330" SelectionMode="Extended"/>
+            </StackPanel>
+        </Grid>
+        
+        <!-- Dialog Buttons -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10">
+            <Button Content="OK" Click="OKButton_Click" Margin="5" Padding="20,5" MinWidth="80"/>
+            <Button Content="Cancel" Click="CancelButton_Click" Margin="5" Padding="20,5" MinWidth="80"/>
         </StackPanel>
     </Grid>
 </Window>

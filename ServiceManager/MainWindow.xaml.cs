@@ -203,40 +203,256 @@ namespace ServiceManager
 
         private void ShowCreateGroupDialog()
         {
-            var dialog = new EditGroupDialog()
+            var dialog = new EditGroupDialog(services)
             {
                 Title = "Create new group"
             };
 
             if (dialog.ShowDialog() == true)
             {
-                //MessageBox.Show("You said: " + dialog.ResponseText);
-
                 if (dialog.ResponseText.Length == 0)
                 {
                     MessageBox.Show("Group name cannot be empty");
-
                     return;
                 }
 
                 if (Groups.Where(x => x.Name == dialog.ResponseText).Count() > 0)
                 {
                     MessageBox.Show("Group with this name already exists");
-
                     return;
                 }
 
-                if (DGServices.SelectedItems.Count == 0)
-                {
-                    if (MessageBox.Show("There are no services selected. Do you want to continue?", "No selected services", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
-                        return;
-                }
-
-                var group = new Group(dialog.ResponseText);
-                group.AddServiceRange(DGServices.SelectedItems);
-
+                var group = dialog.GetGroup();
                 Groups.Add(group);
             }
+        }
+
+        private void EditGroup_Click(object sender, RoutedEventArgs e)
+        {
+            Group selectedGroup = LBGroups.SelectedItem as Group;
+            
+            if (selectedGroup == null)
+            {
+                MessageBox.Show("Please select a group to edit.", "No Group Selected", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            ShowEditGroupDialog(selectedGroup);
+        }
+
+        private void ShowEditGroupDialog(Group groupToEdit)
+        {
+            var dialog = new EditGroupDialog(groupToEdit, services);
+
+            if (dialog.ShowDialog() == true)
+            {
+                if (string.IsNullOrWhiteSpace(dialog.ResponseText))
+                {
+                    MessageBox.Show("Group name cannot be empty");
+                    return;
+                }
+
+                // Check if name conflicts with other groups (excluding the current one)
+                if (Groups.Where(x => x.Name == dialog.ResponseText && x != groupToEdit).Count() > 0)
+                {
+                    MessageBox.Show("Group with this name already exists");
+                    return;
+                }
+
+                // The group is already updated by the dialog
+                LBGroups.Items.Refresh();
+            }
+        }
+
+        private void LBGroups_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // This could be used to update button states based on selection
+        }
+
+        private void StartGroupServices_Click(object sender, RoutedEventArgs e)
+        {
+            Group selectedGroup = LBGroups.SelectedItem as Group;
+            
+            if (selectedGroup == null)
+            {
+                MessageBox.Show("Please select a group.", "No Group Selected", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            ControlGroupServices(selectedGroup, ServiceAction.Start);
+        }
+
+        private void StopGroupServices_Click(object sender, RoutedEventArgs e)
+        {
+            Group selectedGroup = LBGroups.SelectedItem as Group;
+            
+            if (selectedGroup == null)
+            {
+                MessageBox.Show("Please select a group.", "No Group Selected", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            ControlGroupServices(selectedGroup, ServiceAction.Stop);
+        }
+
+        private void PauseGroupServices_Click(object sender, RoutedEventArgs e)
+        {
+            Group selectedGroup = LBGroups.SelectedItem as Group;
+            
+            if (selectedGroup == null)
+            {
+                MessageBox.Show("Please select a group.", "No Group Selected", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            ControlGroupServices(selectedGroup, ServiceAction.Pause);
+        }
+
+        private void ContinueGroupServices_Click(object sender, RoutedEventArgs e)
+        {
+            Group selectedGroup = LBGroups.SelectedItem as Group;
+            
+            if (selectedGroup == null)
+            {
+                MessageBox.Show("Please select a group.", "No Group Selected", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            ControlGroupServices(selectedGroup, ServiceAction.Continue);
+        }
+
+        private enum ServiceAction
+        {
+            Start,
+            Stop,
+            Pause,
+            Continue
+        }
+
+        private void ControlGroupServices(Group group, ServiceAction action)
+        {
+            if (!IsRunningAsAdministrator())
+            {
+                MessageBox.Show($"Administrator privileges are required to {action.ToString().ToLower()} services.", 
+                    "Access Denied", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            if (group.Services.Count == 0)
+            {
+                MessageBox.Show("The selected group contains no services.", "Empty Group", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            var actionText = action.ToString().ToLower();
+            var result = MessageBox.Show($"Do you want to {actionText} all {group.Services.Count} service(s) in group '{group.Name}'?", 
+                $"Confirm {action}", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            
+            if (result != MessageBoxResult.Yes)
+                return;
+
+            int successCount = 0;
+            int failCount = 0;
+            var errors = new List<string>();
+
+            foreach (var serviceWrapper in group.Services)
+            {
+                try
+                {
+                    var serviceController = services.FirstOrDefault(s => s.ServiceName == serviceWrapper.ServiceName);
+                    if (serviceController == null)
+                    {
+                        errors.Add($"Service '{serviceWrapper.ServiceName}' not found.");
+                        failCount++;
+                        continue;
+                    }
+
+                    bool actionPerformed = false;
+
+                    switch (action)
+                    {
+                        case ServiceAction.Start:
+                            if (serviceController.Status != ServiceControllerStatus.Running)
+                            {
+                                serviceController.Start();
+                                serviceController.WaitForStatus(ServiceControllerStatus.Running, new TimeSpan(0, 1, 0));
+                                actionPerformed = true;
+                            }
+                            break;
+                        case ServiceAction.Stop:
+                            if (serviceController.Status != ServiceControllerStatus.Stopped)
+                            {
+                                serviceController.Stop();
+                                serviceController.WaitForStatus(ServiceControllerStatus.Stopped, new TimeSpan(0, 1, 0));
+                                actionPerformed = true;
+                            }
+                            break;
+                        case ServiceAction.Pause:
+                            if (serviceController.Status == ServiceControllerStatus.Running)
+                            {
+                                serviceController.Pause();
+                                serviceController.WaitForStatus(ServiceControllerStatus.Paused, new TimeSpan(0, 1, 0));
+                                actionPerformed = true;
+                            }
+                            break;
+                        case ServiceAction.Continue:
+                            if (serviceController.Status == ServiceControllerStatus.Paused)
+                            {
+                                serviceController.Continue();
+                                serviceController.WaitForStatus(ServiceControllerStatus.Running, new TimeSpan(0, 1, 0));
+                                actionPerformed = true;
+                            }
+                            break;
+                    }
+
+                    if (actionPerformed)
+                        successCount++;
+                    else
+                        failCount++;
+                }
+                catch (InvalidOperationException ex)
+                {
+                    errors.Add($"Cannot {actionText} service '{serviceWrapper.ServiceName}': {ex.Message}");
+                    failCount++;
+                }
+                catch (System.ComponentModel.Win32Exception ex)
+                {
+                    errors.Add($"Access denied {actionText}ing service '{serviceWrapper.ServiceName}': {ex.Message}");
+                    failCount++;
+                }
+                catch (System.ServiceProcess.TimeoutException)
+                {
+                    errors.Add($"Service '{serviceWrapper.ServiceName}' failed to {actionText} within timeout period.");
+                    failCount++;
+                }
+                catch (Exception ex)
+                {
+                    errors.Add($"Error {actionText}ing service '{serviceWrapper.ServiceName}': {ex.Message}");
+                    failCount++;
+                }
+            }
+
+            // Show results
+            var message = $"Group '{group.Name}' service control completed:\n" +
+                         $"• Successfully {actionText}ed: {successCount} service(s)\n" +
+                         $"• Failed: {failCount} service(s)";
+
+            if (errors.Count > 0 && errors.Count <= 5)
+            {
+                message += "\n\nErrors:\n" + string.Join("\n", errors);
+            }
+            else if (errors.Count > 5)
+            {
+                message += $"\n\nErrors (showing first 5 of {errors.Count}):\n" + string.Join("\n", errors.Take(5));
+            }
+
+            var icon = failCount == 0 ? MessageBoxImage.Information : 
+                      successCount > 0 ? MessageBoxImage.Warning : MessageBoxImage.Error;
+            
+            MessageBox.Show(message, $"Group Service Control Results", MessageBoxButton.OK, icon);
+
+            // Refresh the services list to show updated statuses
+            RefreshServicesList();
         }
         
         private void AddToGroup_Click(object sender, RoutedEventArgs e)
