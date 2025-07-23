@@ -696,7 +696,7 @@ namespace ServiceManager
 
                 if (File.Exists(path))
                 {
-                    Groups.AddRange(JsonConvert.DeserializeObject<List<Group>>(File.ReadAllText("data.json")));
+                    Groups.AddRange(JsonConvert.DeserializeObject<List<Group>>(File.ReadAllText(path)));
                 }
             }
             catch (Exception e)
