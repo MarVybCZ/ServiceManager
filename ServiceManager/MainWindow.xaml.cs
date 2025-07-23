@@ -22,6 +22,7 @@ using System.Xml.Serialization;
 using System.IO;
 using System.Xml;
 using Newtonsoft.Json;
+using System.Security.Principal;
 
 namespace ServiceManager
 {
@@ -39,7 +40,11 @@ namespace ServiceManager
         {
             InitializeComponent();
 
-            services = ServiceController.GetServices().ToList().OrderBy(x => x.ServiceName).ToList();
+            // Check permissions and show status
+            CheckAndDisplayPermissionStatus();
+
+            // Initialize services list
+            InitializeServicesWithErrorHandling();
 
             sorting = new List<ListSortDirection?>
             {
@@ -51,10 +56,75 @@ namespace ServiceManager
             };
 
             DGServices.Columns[0].SortDirection = ListSortDirection.Ascending;
-
-            DGServices.ItemsSource = services;
-
             LBGroups.ItemsSource = Groups;
+        }
+
+        private void CheckAndDisplayPermissionStatus()
+        {
+            if (!WindowsPermissionHelper.CanAccessWindowsServices())
+            {
+                MessageBox.Show("Unable to access Windows services. This application requires appropriate permissions to manage services.\n\nPlease run as administrator or check your system configuration.", 
+                    "Service Access Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            else if (!WindowsPermissionHelper.IsRunningAsAdministrator())
+            {
+                MessageBox.Show("This application requires administrator privileges to manage Windows services.\nSome operations may be limited without elevated permissions.\n\nPlease run as administrator for full functionality.", 
+                    "Administrator Privileges Recommended", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        private void InitializeServicesWithErrorHandling()
+        {
+            try
+            {
+                services = ServiceController.GetServices().ToList().OrderBy(x => x.ServiceName).ToList();
+                DGServices.ItemsSource = services;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to load Windows services: {ex.Message}\n\nPlease check your permissions and try running as administrator.", 
+                    "Service Loading Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                services = new List<ServiceController>(); // Initialize empty list to prevent crashes
+                DGServices.ItemsSource = services;
+            }
+        }
+
+        private bool IsRunningAsAdministrator()
+        {
+            return WindowsPermissionHelper.IsRunningAsAdministrator();
+        }
+
+        private void RefreshServicesList()
+        {
+            try
+            {
+                // Dispose old services to free resources
+                if (services != null)
+                {
+                    foreach (var service in services)
+                    {
+                        try
+                        {
+                            service?.Dispose();
+                        }
+                        catch 
+                        {
+                            // Ignore disposal errors
+                        }
+                    }
+                }
+
+                // Get fresh services list
+                services = ServiceController.GetServices().ToList().OrderBy(x => x.ServiceName).ToList();
+                
+                DGServices.ItemsSource = null;
+                DGServices.ItemsSource = services;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error refreshing services list: {ex.Message}", 
+                    "Refresh Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
         }
 
         private void DGServices_ContextMenuOpening(object sender, ContextMenuEventArgs e)
@@ -176,102 +246,255 @@ namespace ServiceManager
 
         private void StartServices_Click(object sender, RoutedEventArgs e)
         {
+            if (!IsRunningAsAdministrator())
+            {
+                MessageBox.Show("Administrator privileges are required to start services.", 
+                    "Access Denied", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
             foreach (ServiceController service in DGServices.SelectedItems)
             {
-                if (service.Status != ServiceControllerStatus.Running)
+                try
                 {
-                    service.Start();
-                    Debug.WriteLine(service.Status);
-                    service.WaitForStatus(ServiceControllerStatus.Running, new TimeSpan(0, 1, 0));
+                    if (service.Status != ServiceControllerStatus.Running)
+                    {
+                        service.Start();
+                        Debug.WriteLine(service.Status);
+                        service.WaitForStatus(ServiceControllerStatus.Running, new TimeSpan(0, 1, 0));
+                    }
+                }
+                catch (InvalidOperationException ex)
+                {
+                    MessageBox.Show($"Cannot start service '{service.ServiceName}': {ex.Message}", 
+                        "Service Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                catch (System.ComponentModel.Win32Exception ex)
+                {
+                    MessageBox.Show($"Access denied starting service '{service.ServiceName}': {ex.Message}", 
+                        "Permission Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                catch (System.ServiceProcess.TimeoutException)
+                {
+                    MessageBox.Show($"Service '{service.ServiceName}' failed to start within timeout period.", 
+                        "Timeout Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
-            DGServices.ItemsSource = null;
-            DGServices.ItemsSource = services;
+            RefreshServicesList();
         }
 
         private void StopServices_Click(object sender, RoutedEventArgs e)
         {
+            if (!IsRunningAsAdministrator())
+            {
+                MessageBox.Show("Administrator privileges are required to stop services.", 
+                    "Access Denied", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
             foreach (ServiceController service in DGServices.SelectedItems)
             {
-                if (service.Status != ServiceControllerStatus.Stopped)
+                try
                 {
-                    service.Stop();
-                    service.WaitForStatus(ServiceControllerStatus.Stopped, new TimeSpan(0, 1, 0));
+                    if (service.Status != ServiceControllerStatus.Stopped)
+                    {
+                        service.Stop();
+                        service.WaitForStatus(ServiceControllerStatus.Stopped, new TimeSpan(0, 1, 0));
+                    }
+                }
+                catch (InvalidOperationException ex)
+                {
+                    MessageBox.Show($"Cannot stop service '{service.ServiceName}': {ex.Message}", 
+                        "Service Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                catch (System.ComponentModel.Win32Exception ex)
+                {
+                    MessageBox.Show($"Access denied stopping service '{service.ServiceName}': {ex.Message}", 
+                        "Permission Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                catch (System.ServiceProcess.TimeoutException)
+                {
+                    MessageBox.Show($"Service '{service.ServiceName}' failed to stop within timeout period.", 
+                        "Timeout Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
-            DGServices.ItemsSource = null;
-            DGServices.ItemsSource = services;
+            RefreshServicesList();
         }
 
         private void ContinueServices_Click(object sender, RoutedEventArgs e)
         {
+            if (!IsRunningAsAdministrator())
+            {
+                MessageBox.Show("Administrator privileges are required to continue services.", 
+                    "Access Denied", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
             foreach (ServiceController service in DGServices.SelectedItems)
             {
-                if (service.Status != ServiceControllerStatus.Running)
+                try
                 {
-                    service.Continue();
-                    service.WaitForStatus(ServiceControllerStatus.Running, new TimeSpan(0, 1, 0));
+                    if (service.Status != ServiceControllerStatus.Running)
+                    {
+                        service.Continue();
+                        service.WaitForStatus(ServiceControllerStatus.Running, new TimeSpan(0, 1, 0));
+                    }
+                }
+                catch (InvalidOperationException ex)
+                {
+                    MessageBox.Show($"Cannot continue service '{service.ServiceName}': {ex.Message}", 
+                        "Service Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                catch (System.ComponentModel.Win32Exception ex)
+                {
+                    MessageBox.Show($"Access denied continuing service '{service.ServiceName}': {ex.Message}", 
+                        "Permission Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                catch (System.ServiceProcess.TimeoutException)
+                {
+                    MessageBox.Show($"Service '{service.ServiceName}' failed to continue within timeout period.", 
+                        "Timeout Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
-            DGServices.ItemsSource = null;
-            DGServices.ItemsSource = services;
+            RefreshServicesList();
         }
 
         private void PauseServices_Click(object sender, RoutedEventArgs e)
         {
+            if (!IsRunningAsAdministrator())
+            {
+                MessageBox.Show("Administrator privileges are required to pause services.", 
+                    "Access Denied", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
             foreach (ServiceController service in DGServices.SelectedItems)
             {
-                if (service.Status != ServiceControllerStatus.Paused)
+                try
                 {
-                    service.Pause();
-                    service.WaitForStatus(ServiceControllerStatus.Paused, new TimeSpan(0, 1, 0));
+                    if (service.Status != ServiceControllerStatus.Paused)
+                    {
+                        service.Pause();
+                        service.WaitForStatus(ServiceControllerStatus.Paused, new TimeSpan(0, 1, 0));
+                    }
+                }
+                catch (InvalidOperationException ex)
+                {
+                    MessageBox.Show($"Cannot pause service '{service.ServiceName}': {ex.Message}", 
+                        "Service Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                catch (System.ComponentModel.Win32Exception ex)
+                {
+                    MessageBox.Show($"Access denied pausing service '{service.ServiceName}': {ex.Message}", 
+                        "Permission Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                catch (System.ServiceProcess.TimeoutException)
+                {
+                    MessageBox.Show($"Service '{service.ServiceName}' failed to pause within timeout period.", 
+                        "Timeout Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
-            DGServices.ItemsSource = null;
-            DGServices.ItemsSource = services;
+            RefreshServicesList();
         }
 
         private void AutomaticStart_Click(object sender, RoutedEventArgs e)
         {
+            if (!IsRunningAsAdministrator())
+            {
+                MessageBox.Show("Administrator privileges are required to change service startup type.", 
+                    "Access Denied", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
             foreach (ServiceController service in DGServices.SelectedItems)
             {
-                if (service.StartType != ServiceStartMode.Automatic)
+                try
                 {
-                    //https://msdn.microsoft.com/en-us/library/windows/desktop/ms681987(v=vs.85).aspx
-                    var xxx = PInvoke.NativeMethods.ChangeServiceConfigW(service.ServiceHandle.DangerousGetHandle(), 0xffffffff, 0x00000002, 0xffffffff, null, null, IntPtr.Zero, null, null, null, null);
+                    if (service.StartType != ServiceStartMode.Automatic)
+                    {
+                        //https://msdn.microsoft.com/en-us/library/windows/desktop/ms681987(v=vs.85).aspx
+                        var result = PInvoke.NativeMethods.ChangeServiceConfigW(service.ServiceHandle.DangerousGetHandle(), 0xffffffff, 0x00000002, 0xffffffff, null, null, IntPtr.Zero, null, null, null, null);
+                        if (!result)
+                        {
+                            MessageBox.Show($"Failed to change startup type for service '{service.ServiceName}'. Error code: {System.Runtime.InteropServices.Marshal.GetLastWin32Error()}", 
+                                "Service Configuration Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error changing startup type for service '{service.ServiceName}': {ex.Message}", 
+                        "Service Configuration Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
-            DGServices.ItemsSource = null;
-            DGServices.ItemsSource = services;
+            RefreshServicesList();
         }
 
         private void ManualStart_Click(object sender, RoutedEventArgs e)
         {
+            if (!IsRunningAsAdministrator())
+            {
+                MessageBox.Show("Administrator privileges are required to change service startup type.", 
+                    "Access Denied", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
             foreach (ServiceController service in DGServices.SelectedItems)
             {
-                if (service.StartType != ServiceStartMode.Manual)
+                try
                 {
-                    //https://msdn.microsoft.com/en-us/library/windows/desktop/ms681987(v=vs.85).aspx
-                    var xxx = PInvoke.NativeMethods.ChangeServiceConfigW(service.ServiceHandle.DangerousGetHandle(), 0xffffffff, 0x00000003, 0xffffffff, null, null, IntPtr.Zero, null, null, null, null);
+                    if (service.StartType != ServiceStartMode.Manual)
+                    {
+                        //https://msdn.microsoft.com/en-us/library/windows/desktop/ms681987(v=vs.85).aspx
+                        var result = PInvoke.NativeMethods.ChangeServiceConfigW(service.ServiceHandle.DangerousGetHandle(), 0xffffffff, 0x00000003, 0xffffffff, null, null, IntPtr.Zero, null, null, null, null);
+                        if (!result)
+                        {
+                            MessageBox.Show($"Failed to change startup type for service '{service.ServiceName}'. Error code: {System.Runtime.InteropServices.Marshal.GetLastWin32Error()}", 
+                                "Service Configuration Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error changing startup type for service '{service.ServiceName}': {ex.Message}", 
+                        "Service Configuration Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
-            DGServices.ItemsSource = null;
-            DGServices.ItemsSource = services;
+            RefreshServicesList();
         }
 
         private void DisabledStart_Click(object sender, RoutedEventArgs e)
         {
+            if (!IsRunningAsAdministrator())
+            {
+                MessageBox.Show("Administrator privileges are required to change service startup type.", 
+                    "Access Denied", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
             foreach (ServiceController service in DGServices.SelectedItems)
             {
-                if (service.StartType != ServiceStartMode.Disabled)
+                try
                 {
-                    //https://msdn.microsoft.com/en-us/library/windows/desktop/ms681987(v=vs.85).aspx
-                    var xxx = PInvoke.NativeMethods.ChangeServiceConfigW(service.ServiceHandle.DangerousGetHandle(), 0xffffffff, 0x00000004, 0xffffffff, null, null, IntPtr.Zero, null, null, null, null);
+                    if (service.StartType != ServiceStartMode.Disabled)
+                    {
+                        //https://msdn.microsoft.com/en-us/library/windows/desktop/ms681987(v=vs.85).aspx
+                        var result = PInvoke.NativeMethods.ChangeServiceConfigW(service.ServiceHandle.DangerousGetHandle(), 0xffffffff, 0x00000004, 0xffffffff, null, null, IntPtr.Zero, null, null, null, null);
+                        if (!result)
+                        {
+                            MessageBox.Show($"Failed to change startup type for service '{service.ServiceName}'. Error code: {System.Runtime.InteropServices.Marshal.GetLastWin32Error()}", 
+                                "Service Configuration Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error changing startup type for service '{service.ServiceName}': {ex.Message}", 
+                        "Service Configuration Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
 
-            DGServices.ItemsSource = null;
-            DGServices.ItemsSource = services;
+            RefreshServicesList();
         }
 
         /// <summary>
@@ -388,6 +611,35 @@ namespace ServiceManager
         private void Window_Closed(object sender, EventArgs e)
         {
             SaveGroups();
+            
+            // Clean up service resources
+            CleanupResources();
+        }
+
+        private void CleanupResources()
+        {
+            try
+            {
+                if (services != null)
+                {
+                    foreach (var service in services)
+                    {
+                        try
+                        {
+                            service?.Dispose();
+                        }
+                        catch
+                        {
+                            // Ignore disposal errors
+                        }
+                    }
+                    services.Clear();
+                }
+            }
+            catch
+            {
+                // Ignore cleanup errors
+            }
         }
 
         private void LoadGroups()
@@ -411,7 +663,16 @@ namespace ServiceManager
 
                 //var path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "//data.json";
 
-                var path = "data.json";
+                var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                var appFolder = System.IO.Path.Combine(appDataPath, "ServiceManager");
+                
+                // Create app folder if it doesn't exist
+                if (!Directory.Exists(appFolder))
+                {
+                    Directory.CreateDirectory(appFolder);
+                }
+                
+                var path = System.IO.Path.Combine(appFolder, "data.json");
 
                 if (File.Exists(path))
                 {
@@ -420,7 +681,7 @@ namespace ServiceManager
             }
             catch (Exception e)
             {
-                MessageBox.Show("Unable to load data.", "Error");
+                MessageBox.Show($"Unable to load data: {e.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
@@ -446,13 +707,25 @@ namespace ServiceManager
             {
                 //var path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "//data.json";
 
-                var path = "data.json";
+                var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                var appFolder = System.IO.Path.Combine(appDataPath, "ServiceManager");
+                
+                // Create app folder if it doesn't exist
+                if (!Directory.Exists(appFolder))
+                {
+                    Directory.CreateDirectory(appFolder);
+                }
+                
+                var path = System.IO.Path.Combine(appFolder, "data.json");
 
                 var text = JsonConvert.SerializeObject(Groups);
 
                 File.WriteAllText(path, text);
             }
-            catch (Exception e) { MessageBox.Show("Unable to save data.", "Error"); }
+            catch (Exception e) 
+            { 
+                MessageBox.Show($"Unable to save data: {e.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Warning); 
+            }
         }
     }
 }
