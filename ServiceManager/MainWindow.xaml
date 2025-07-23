@@ -47,7 +47,7 @@
                     <DataTemplate>
                         <StackPanel Margin="0,2">
                             <TextBlock Text="{Binding Name}" Margin="0,0,0,0" FontWeight="Bold"></TextBlock>
-                            <TextBlock Text="{Binding Services.Count, StringFormat='{0} services'}" Margin="0,0,0,2" Foreground="Gray" FontSize="10"></TextBlock>
+                            <TextBlock Text="{Binding Services.Count, StringFormat='{}{0} services'}" Margin="0,0,0,2" Foreground="Gray" FontSize="10"></TextBlock>
                             <ListBox ItemsSource="{Binding Services}" Margin="0,0,0,0">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
