@@ -254,7 +254,7 @@ namespace ServiceManager
 
         private void RemoveGroup(Group group)
         {
-            MessageBoxResult result = MessageBox.Show("Do you realy want to remove group '" + group.Name + "'?", "Warning", MessageBoxButton.YesNo);
+            MessageBoxResult result = MessageBox.Show("Do you really want to remove group '" + group.Name + "'?", "Warning", MessageBoxButton.YesNo);
 
             if (result == MessageBoxResult.Yes)
             {
