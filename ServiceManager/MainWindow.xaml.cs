@@ -238,10 +238,30 @@ namespace ServiceManager
                 Groups.Add(group);
             }
         }
-
+        
         private void AddToGroup_Click(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void RemoveGroup_Click(object sender, RoutedEventArgs e)
+        {
+            Group group = LBGroups.SelectedItem as Group;
+
+            if (group != null)
+                RemoveGroup(group);
+        }
+
+        private void RemoveGroup(Group group)
+        {
+            MessageBoxResult result = MessageBox.Show("Do you really want to remove group '" + group.Name + "'?", "Warning", MessageBoxButton.YesNo);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                Groups.Remove(group);
+
+                LBGroups.Items.Refresh();                
+            }
         }
 
         private void StartServices_Click(object sender, RoutedEventArgs e)

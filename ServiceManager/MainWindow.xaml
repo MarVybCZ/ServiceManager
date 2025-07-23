@@ -14,8 +14,9 @@
         </Grid.RowDefinitions>
 
         <ToolBarTray VerticalAlignment="Top" Grid.Row="0" Height="27" Grid.RowSpan="2">
-            <ToolBar >
+            <ToolBar>
                 <Button Content="Create group" Click="CreateGroup_Click" />
+                <Button Content="Remove group" Click="RemoveGroup_Click" />
             </ToolBar>
         </ToolBarTray>
 
@@ -44,7 +45,7 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-            
+
             <GridSplitter Grid.Column="0" Width="5"/>
 
             <DataGrid x:Name="DGServices" Margin="10,10,10,10" AutoGenerateColumns="False" CanUserReorderColumns="False" GridLinesVisibility="Vertical" VerticalGridLinesBrush="#FFEAEAEA" SelectionMode="Extended" HeadersVisibility="Column" ContextMenuOpening="DGServices_ContextMenuOpening" Sorting="DGServices_Sorting" Grid.Column="1">
